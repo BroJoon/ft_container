@@ -71,7 +71,7 @@ namespace ft
 				return *this;
 			}
 
-			reverse_iterator operator--()
+			reverse_iterator& operator--()
 			{
 				this->iterator++;
 				return *this;
@@ -112,7 +112,7 @@ namespace ft
 
 	template <class IteratorL, class IteratorR>
 	bool operator==(reverse_iterator<IteratorL> const& lhs,
-			reverse_iterator<IteratorR> contst& rhs)
+			reverse_iterator<IteratorR> const& rhs)
 	{
 		return lhs.base() == rhs.base();
 	}

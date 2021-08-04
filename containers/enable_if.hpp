@@ -85,7 +85,7 @@ namespace ft
 	};
 
 	template<>
-	struct is_integral<unsinged long long>
+	struct is_integral<unsigned long long>
 	{
 		static bool const value = true;
 	};

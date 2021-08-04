@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <iterator>
 #include <stdexcept>
 #include <sstream>
 
@@ -242,7 +243,7 @@ namespace ft
 						return this->ptr_;
 					}
 
-					const_iterator&  operator++()
+					const_iterator& operator++()
 					{
 						this->ptr_++;
 						return *this;
@@ -273,7 +274,7 @@ namespace ft
 						return this->ptr_ + n;
 					}
 
-					friend const_iterator operator+(difference_type const &n,
+					friend const_iterator operator+(difference_type const& n,
 							const_iterator const& rhs)
 					{
 						return rhs.ptr_ + n;
@@ -352,7 +353,7 @@ namespace ft
 			vector(InputIterator first, InputIterator last,
 					allocator_type const& alloc = allocator_type(),
 					typename ft::enable_if<!ft::is_integral<InputIterator>::value,
-					bool>::type = type) :
+					bool>::type = true) :
 				alloc_(alloc),
 				size_(0),
 				capacity_(0),
@@ -365,7 +366,7 @@ namespace ft
 				pointer it = this->array_;
 				while (first != last)
 				{
-					this->alloc.constructor(it, *first);
+					this->alloc_.construct(it, *first);
 					it++;
 					first++;
 				}
@@ -451,7 +452,7 @@ namespace ft
 
 			size_type max_size() const
 			{
-				return this->alloc.max_size();
+				return this->alloc_.max_size();
 			}
 
 			void resize(size_type n, value_type val = value_type())
@@ -574,12 +575,12 @@ namespace ft
 			void assign(size_type n, const value_type& val)
 			{
 				this->clear();
-				this->size = n;
+				this->size_ = n;
 				if (this->capacity_ < n)
 				{
 					this->alloc_.deallocate(this->array_, this->capacity_);
 					this->capacity_ = n;
-					this->array_ = this->alloc_.allocate(this->capacity);
+					this->array_ = this->alloc_.allocate(this->capacity_);
 				}
 				for (size_type i = 0; i < n; i+=)
 					this->alloc_.construct(this->array_ + i, val);
@@ -590,7 +591,7 @@ namespace ft
 			{
 				if (this->capacity_ == 0)
 					this->reserve(1);
-				else if (this->size == this->capacity_)
+				else if (this->size_ == this->capacity_)
 					this->reserve(this->capacity_ * 2);
 				this->alloc_.construct(this->array_ + this->size_, val);
 				this->size_++;
@@ -626,7 +627,7 @@ namespace ft
 			{
 				if (n == 0)
 					return;
-				difference_type index = position.ptr - this->array_;
+				difference_type index = position.ptr_ - this->array_;
 				if (this->size_ + n > this->size_ * 2)
 					this->reserve(this->size_ + n);
 				else if (this->size_ + n > this->capacity_)
@@ -710,8 +711,93 @@ namespace ft
 
 			void swap(vector& x)
 			{
-
+				size_type st_tmp = this->size_;
+				this->size_ = x.size_;
+				x.size_ = st_tmp;
+				st_tmp = this->capacity_;
+				this->capacity_ = x.capacity_;
+				x.capacity_ = st_tmp;
+				pointer p_tmp = this->array_;
+				this->array_ = x.array_;
+				x.array_ = p_tmp;
+				return;
 			}
+
+			void clear()
+			{
+				for (size_type i = 0, size =  this->size_; i < size; ++i)
+					this->alloc_.destroy(this->array_ + i);
+				this->size_ = 0;
+				return;
+			}
+
+			allocator_type get_allocator() const
+			{
+				return this->alloc_;
+			}
+		protected:
+			allocator_type alloc_;
+			size_type size_;
+			size_type capacity_;
+			pointer array_;
+
+			template <class InputIterator>
+			size_type iteration_size(InputIterator it, InputIterator ite)
+			{
+				size_type size = 0;
+				while (it != ite)
+				{
+					size++;
+					it++;
+				}
+				return size;
+			}
+	};
+
+	template <class T, class Alloc>
+	bool operator==(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return false;
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	template <class T, class Alloc>
+	bool operator!=(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template <class T, class Alloc>
+	bool operator<(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(),
+				rhs.begin(), rhs.end());
+	}
+
+	template <class T, class Alloc>
+	bool operator<=(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		return !(rhs < lhs);
+	}
+
+	template <class T, class Alloc>
+	bool operator>(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		return rhs < lhs;
+	}
+
+	template <class T, class Alloc>
+	bool operator>=(vector<T,Alloc> const& lhs, vector<T,Alloc> const& rhs)
+	{
+		return !(lhs < rhs);
+	}
+
+	template <class T, class Alloc>
+	void swap(vector<T,Alloc>& x, vector<T,Alloc>& y)
+	{
+		x.swap(y);
+		return;
 	}
 }
 
