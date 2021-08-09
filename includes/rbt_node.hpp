@@ -24,7 +24,7 @@ namespace ft
 				return;
 			}
 
-			rbt_node(rbt_node const* src) :
+			rbt_node(rbt_node const& src) :
 				is_red(src.is_red),
 				parent(src.parent),
 				left(src.left),

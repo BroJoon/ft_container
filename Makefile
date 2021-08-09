@@ -1,21 +1,20 @@
-FT_NAME = ft_container
-STD_NAME = std_cotainer
+NAME = ft_container
 
 CC = clang++
-CFLAGS = -Wall -Wextra -Werror -I ./containers/ -std=c++98
+CFLAGS = -Wall -Wextra -Werror -I ./includes -std=c++98
 
-SRCS = tests/vector.cpp \
-	   tests/stack.cpp
+SRCS = srcs/stack.cpp \
+	   srcs/vector.cpp \
+	   srcs/main.cpp
 
-all: $(FT_NAME) $(STD_NAME)
+all: $(NAME)
 
-$(FT_NAME): $(SRCS)
-	@echo Compiling $(FT_NAME)
-	@$(CC) $(CFLAGS) -DNAMESPACE=ft -o $(FT_NAME) $(SRCS)
-	@$(CC) $(CFLAGS) -DNAMESPACE=std -o $(STD_NAME) $(SRCS)
+$(NAME): $(SRCS)
+	@echo Compiling $(NAME)
+	@$(CC) $(CFLAGS) -DNAMESPACE=ft -o $(NAME) $(SRCS)
 
 clean:
-	rm -rf $(FT_NAME) $(STD_NAME)
+	rm -rf $(NAME)
 
 fclean: clean
 

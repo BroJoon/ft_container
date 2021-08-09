@@ -9,7 +9,7 @@ namespace ft
 	{
 		while (first1 != last1)
 		{
-			if (!(*first == *first2))
+			if (!(*first1 == *first2))
 				return false;
 			++first1;
 			++first2;
@@ -23,7 +23,7 @@ namespace ft
 	{
 		while (first1 != last1)
 		{
-			if (pred(*first, *first2) == false)
+			if (pred(*first1, *first2) == false)
 				return false;
 			++first1;
 			++first2;

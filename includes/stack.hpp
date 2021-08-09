@@ -5,7 +5,7 @@
 
 namespace ft
 {
-	template <class T, class Container = vector<T>>
+	template <class T, class Container = vector<T> >
 	class stack;
 
 	template <class T, class Container>
@@ -49,7 +49,7 @@ namespace ft
 	{
 		public:
 			typedef T value_type;
-			typedef Container container_type
+			typedef Container container_type;
 			typedef std::size_t size_type;
 		protected:
 			container_type ctnr_;

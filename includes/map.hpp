@@ -1,5 +1,5 @@
 #ifndef MAP_HPP
-#define HAP_HPP
+#define MAP_HPP
 
 #define RESET "\033[0m"
 #define RED "\033[31m"
@@ -22,8 +22,8 @@
 
 namespace ft
 {
-	template <class Key, class T, class Compare = ft::less<key>,
-			class Alloc = std::allocator<ft::pair<Key const, T>>>
+	template <class Key, class T, class Compare = ft::less<Key>,
+			class Alloc = std::allocator<ft::pair<Key const, T> > >
 	class map
 	{
 		public:
@@ -339,7 +339,7 @@ namespace ft
 					allocator_type const& alloc = allocator_type()) :
 				comp_(comp),
 				alloc_(alloc),
-				node_alloc(),
+				node_alloc_(),
 				ghost_node_(this->node_alloc.allocate(1)),
 				nil_node_(this->node_alloc.allocate(1)),
 				root_node_(this->node_alloc.allocate(1)),
@@ -489,7 +489,7 @@ namespace ft
 				{
 					if (this->comp_(val.first, node->val.first) == true)
 					{
-						if (node->left == this->nil_node_)
+						if (node->left == this->nil_node_
 								|| node->left == this->ghost_node_) {
 							return insert_node(node, &node->left, val);
 						}
@@ -497,7 +497,7 @@ namespace ft
 					}
 					else if (this->comp_(node->val.first, val.first) == true)
 					{
-						if (node->right == this->nil_node_)
+						if (node->right == this->nil_node_
 								|| node->right == this->ghost_node_) {
 							return insert_node(node, &node->right, val);
 						}
@@ -599,7 +599,7 @@ namespace ft
 					violating_node = node->right;
 					violating_node->parent = node->parent;
 				}
-				else if (node->right == this->nil_node_)
+				else if (node->right == this->nil_node_
 						|| node->right == this->ghost_node_)
 				{
 					this->substitute_node(node, node->left);
@@ -881,7 +881,7 @@ namespace ft
 				while (parent && parent->is_red == true)
 				{
 					rbt_node* grand_parent = node->get_grand_parent();
-					rbt_noe* uncle = node->get_uncle();
+					rbt_node* uncle = node->get_uncle();
 					if (uncle != this->nil_node_ && uncle->is_red == true)
 					{
 						parent->is_red = false;
@@ -999,7 +999,7 @@ namespace ft
 					else
 					{
 						sibling = node->parent->left;
-						if (sibling->is_red = true)
+						if (sibling->is_red == true)
 						{
 							sibling->is_red = false;
 							node->parent->is_red = true;
@@ -1046,7 +1046,7 @@ namespace ft
 
 			void substitute_node(rbt_node* node, rbt_node* substitute)
 			{
-				if (substitute != this->nil_node_)
+				if (substitute != this->nil_node_
 						&& substitute != this->ghost_node_) {
 					substitute->parent = node->parent;
 				}

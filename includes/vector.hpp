@@ -15,7 +15,7 @@
 
 namespace ft
 {
-	template <class T, class Alloc = std::allocator<T>>
+	template <class T, class Alloc = std::allocator<T> >
 	class vector
 	{
 		public:
@@ -68,7 +68,7 @@ namespace ft
 
 					iterator& operator=(iterator const& rhs)
 					{
-						this->ptr_ = rhs.ptr;
+						this->ptr_ = rhs.ptr_;
 						return *this;
 					}
 
@@ -79,7 +79,7 @@ namespace ft
 
 					bool operator!=(const_iterator const& rhs) const
 					{
-						return this->pth_ != rhs.ptr_;
+						return this->ptr_ != rhs.ptr_;
 					}
 
 					reference operator*() const
@@ -332,7 +332,7 @@ namespace ft
 				alloc_(alloc),
 				size_(0),
 				capacity_(0),
-				array_(this->alloc.allocate(this->capacity_))
+				array_(this->alloc_.allocate(this->capacity_))
 			{
 				return;
 			}
@@ -340,9 +340,9 @@ namespace ft
 			explicit vector(size_type n, value_type const& val = value_type(),
 					allocator_type const& alloc = allocator_type()) :
 				alloc_(alloc),
-				size_(n);
+				size_(n),
 				capacity_(n),
-				array_(this->alloc.allocate(this->capacity_))
+				array_(this->alloc_.allocate(this->capacity_))
 			{
 				for (size_type i = 0; i < n; i++)
 					this->alloc_.construct(this->array_ + i, val);
@@ -377,7 +377,7 @@ namespace ft
 				alloc_(x.alloc_),
 				size_(x.size_),
 				capacity_(x.size_),
-				array_(this->alloc.allocate(this->capacity_))
+				array_(this->alloc_.allocate(this->capacity_))
 			{
 				for (size_type i = 0, size = x.size_; i < size; ++i)
 					this->alloc_.construct(this->array_ + i, x.array_[i]);
@@ -582,7 +582,7 @@ namespace ft
 					this->capacity_ = n;
 					this->array_ = this->alloc_.allocate(this->capacity_);
 				}
-				for (size_type i = 0; i < n; i+=)
+				for (size_type i = 0; i < n; i++)
 					this->alloc_.construct(this->array_ + i, val);
 				return;
 			}
@@ -632,7 +632,7 @@ namespace ft
 					this->reserve(this->size_ + n);
 				else if (this->size_ + n > this->capacity_)
 					this->reserve(this->size_ * 2);
-				for (position it = this->array_ + this->size_ - 1 + n,
+				for (pointer it = this->array_ + this->size_ - 1 + n,
 						ite = this->array_ + index - 1 + n; it != ite; --it)
 				{
 					this->alloc_.construct(it, *(it - n));
@@ -656,6 +656,13 @@ namespace ft
 					return;
 				difference_type index = position.ptr_ - this->array_;
 				size_type n = iteration_size(first, last);
+				pointer tmp = this->alloc_.allocate(n);
+				while (first != last)
+				{
+					this->alloc_.construct(tmp, *first);
+					first++;
+					tmp++;
+				}
 				if (this->size_ + n > this->size_ * 2)
 					this->reserve(this->size_ + n);
 				else if (this->size_ + n > this->capacity_)
@@ -668,11 +675,12 @@ namespace ft
 				}
 				this->size_ += n;
 				while (n > 0)
-				{
-					last--;
-					this->alloc_.construct(this->array_ + index - 1 + n, *last);
-					n--;
+				{		
+					--tmp;
+					this->alloc_.construct(this->array_ + index - 1 + n, *tmp);
+					--n;
 				}
+				this->alloc_.deallocate(tmp, n);
 				return;
 			}
 			
