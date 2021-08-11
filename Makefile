@@ -5,13 +5,14 @@ CFLAGS = -Wall -Wextra -Werror -I ./includes -std=c++98
 
 SRCS = srcs/stack.cpp \
 	   srcs/vector.cpp \
+	   srcs/map.cpp \
 	   srcs/main.cpp
 
 all: $(NAME)
 
 $(NAME): $(SRCS)
 	@echo Compiling $(NAME)
-	@$(CC) $(CFLAGS) -DNAMESPACE=ft -o $(NAME) $(SRCS)
+	@$(CC) $(CFLAGS) -o $(NAME) $(SRCS)
 
 clean:
 	rm -rf $(NAME)
